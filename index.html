@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servants d'Autel - Camp Annuel 2026</title>
+    
+    <link rel="icon" type="image/jpeg" href="favicon.jpeg">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #630d17; /* Rouge Bordeaux Liturgique */
+            --secondary-color: #d4af37; /* Or / Doré */
+            --accent-color: #2c3e50;
+            --bg-color: #fcfbf9;
+            --card-bg: #ffffff;
+            --text-color: #2f3542;
+        }
+
+        * {
+            box-shadow: none;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .logo span { color: var(--secondary-color); }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--secondary-color); }
+
+        section {
+            padding: 100px 20px 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 30px;
+            color: var(--primary-color);
+            margin-bottom: 35px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            margin: 8px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        #accueil {
+            background: linear-gradient(rgba(99, 13, 23, 0.88), rgba(44, 62, 80, 0.85)), url('https://i.pinimg.com/1200x/ec/36/0c/ec360c6f819468fd46dce3587a428e71.jpg') no-repeat center center/cover;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding-top: 100px;
+            max-width: 100%;
+            border-bottom: 5px solid var(--secondary-color);
+        }
+
+        #accueil h1 {
+            font-size: 44px;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+            letter-spacing: 1px;
+        }
+
+        #accueil h1 span { color: var(--secondary-color); }
+
+        #accueil p {
+            font-size: 20px;
+            max-width: 800px;
+            margin-bottom: 35px;
+            color: #f7f1e3;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        }
+
+        .btn-cta {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 14px 35px;
+            text-decoration: none;
+            font-weight: 800;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: transform 0.3s, background 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-cta:hover {
+            background-color: #c59b27;
+            transform: translateY(-2px);
+        }
+
+        .welcome-box {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.04);
+            border-top: 5px solid var(--primary-color);
+            border-bottom: 5px solid var(--secondary-color);
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .welcome-box h3 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .welcome-box p {
+            font-size: 16px;
+            color: #4b5563;
+            text-align: justify;
+        }
+
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .form-group-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group { margin-bottom: 22px; }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fafbfc;
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .finance-panel {
+            background: linear-gradient(135deg, var(--primary-color), #40040b);
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .finance-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .finance-line.total {
+            border-bottom: none;
+            padding-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .finance-line.total .amount {
+            color: var(--secondary-color);
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+            transition: background 0.3s, transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            background-color: #c59b27;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 12px; }
+            .form-group-row { grid-template-columns: 1fr; gap: 0; }
+            #accueil h1 { font-size: 30px; }
+            #accueil p { font-size: 16px; }
+            section { padding-top: 120px; }
+            .form-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <a href="#accueil" class="logo">Camp Servants d'Autel <span>2026</span></a>
+            <ul class="nav-links">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#presentation">Message</a></li>
+                <li><a href="#inscription">Inscription Paroisse</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="accueil">
+        <h1>Camp Annuel des Servants d'Autel <span>Édition 2026</span></h1>
+        <p>« Servir le Seigneur dans la joie et la sainteté. » Réunissons nos paroisses pour un moment de foi, de partage, de formation liturgique et de grands jeux fraternels !</p>
+        <a href="#inscription" class="btn-cta">Inscrire ma Paroisse</a>
+    </section>
+
+    <section id="presentation">
+        <h2 class="section-title">Bienvenue au Camp 2026</h2>
+        <div class="welcome-box">
+            <h3>Chers Responsables et Servants d'Autel,</h3>
+            <p>L'édition 2026 de notre grand rassemblement annuel est enfin lancée ! Ce camp est l'occasion unique pour tous les servants d'autel de fortifier leur engagement spirituel, de parfaire leur service autour de l'autel, et de défendre fièrement les couleurs de leurs paroisses respectives lors des grandes compétitions et jeux prévus. Pour faciliter l'organisation logistique globale, chaque paroisse doit impérativement enregistrer son groupe de participants via ce portail unique. Remplissez consciencieusement les informations requises et téléchargez votre reçu de confirmation à présenter lors de votre arrivée sur le lieu du camp.</p>
+        </div>
+    </section>
+
+    <section id="inscription">
+        <h2 class="section-title">Enregistrement de la Paroisse</h2>
+        
+        <div class="form-container">
+            <form id="campForm">
+                
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="paroisse">Nom de la Paroisse *</label>
+                        <input type="text" id="paroisse" required placeholder="Ex: Saint Michel">
+                    </div>
+                    <div class="form-group">
+                        <label for="doyenne">Nom du Doyenné *</label>
+                        <input type="text" id="doyenne" required placeholder="Ex: Doyenné Centre">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lieuCamp">Lieu d'affectation du Camp *</label>
+                    <input type="text" id="lieuCamp" required placeholder="Ex: Paroisse Saint Michel de SEME KRAKE">
+                </div>
+
+                <div class="form-group">
+                    <label for="participants">Nombre total de participants (enfants) *</label>
+                    <input type="number" id="participants" min="1" required placeholder="Ex: 15" oninput="calculerFrais()">
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="nom_resp">Nom & Prénom du Responsable *</label>
+                        <input type="text" id="nom_resp" required placeholder="Ex: M. Jean KOFFI">
+                    </div>
+                    <div class="form-group">
+                        <label for="tel_resp">Téléphone du Responsable *</label>
+                        <input type="tel" id="tel_resp" required placeholder="Ex: 0102030405">
+                    </div>
+                </div>
+
+                <div class="finance-panel">
+                    <div class="finance-line">
+                        <span>Frais d'hébergement & Camp (3 000 F / enfant) :</span>
+                        <span id="calculCamp">0 F CFA</span>
+                    </div>
+                    <div class="finance-line">
+                        <span>Frais de participation aux Jeux (1 000 F / enfant) :</span>
+                        <span id="calculJeux">0 F CFA</span>
+                    </div>
+                    <div class="finance-line total">
+                        <span>SOMME TOTALE À PAYER :</span>
+                        <span class="amount" id="calculTotal">0 F CFA</span>
+                    </div>
+                </div>
+
+                <button type="submit">Valider l'Inscription & Éditer le Reçu</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        const TARIF_CAMP = 3000;
+        const TARIF_JEUX = 1000;
+
+        function calculerFrais() {
+            const nbr = parseInt(document.getElementById("participants").value) || 0;
+            const totalCamp = nbr * TARIF_CAMP;
+            const totalJeux = nbr * TARIF_JEUX;
+            const totalGeneral = totalCamp + totalJeux;
+
+            document.getElementById("calculCamp").textContent = totalCamp.toLocaleString('fr-FR') + " F CFA";
+            document.getElementById("calculJeux").textContent = totalJeux.toLocaleString('fr-FR') + " F CFA";
+            document.getElementById("calculTotal").textContent = totalGeneral.toLocaleString('fr-FR') + " F CFA";
+        }
+
+        document.getElementById("campForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const nbrParticipants = parseInt(document.getElementById("participants").value) || 0;
+            const tCamp = nbrParticipants * TARIF_CAMP;
+            const tJeux = nbrParticipants * TARIF_JEUX;
+            const totalFinances = tCamp + tJeux;
+
+            const donnees = {
+                refCamp: "CSA-" + Math.floor(100000 + Math.random() * 900000),
+                paroisse: document.getElementById("paroisse").value.toUpperCase(),
+                doyenne: document.getElementById("doyenne").value,
+                lieuCamp: document.getElementById("lieuCamp").value,
+                participants: nbrParticipants,
+                nomResponsable: document.getElementById("nom_resp").value,
+                telResponsable: document.getElementById("tel_resp").value,
+                fraisCampStr: tCamp.toLocaleString('fr-FR') + " F CFA",
+                fraisJeuxStr: tJeux.toLocaleString('fr-FR') + " F CFA",
+                montantTotal: totalFinances.toLocaleString('fr-FR') + " F CFA"
+            };
+
+            const qrText = `Ref:${donnees.refCamp}|Paroisse:${donnees.paroisse}|Inscrits:${donnees.participants}|Total:${donnees.montantTotal}`;
+            const qrSrcCode = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(qrText)}&choe=UTF-8`;
+
+            genererFicheFraisPDF(donnees, qrSrcCode);
+            envoyerVersGoogleForm(donnees);
+
+            alert("Succès ! L'inscription a été enregistrée. Votre reçu officiel et personnalisé a été téléchargé.");
+            document.getElementById("campForm").reset();
+            calculerFrais();
+        });
+
+        // GENERATION DU PDF PROFESSIONNEL
+        function genererFicheFraisPDF(d, qrCodeUrl) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // 1. BANNIÈRE SUPÉRIEURE (Style Institutionnel)
+            doc.setFillColor(99, 13, 23); // Bordeaux
+            doc.rect(0, 0, 220, 38, 'F');
+            doc.setFillColor(212, 175, 55); // Filet Doré
+            doc.rect(0, 38, 220, 2.5, 'F');
+            
+            // Texte de l'entête
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.text("CAMP ANNUEL DES SERVANTS D'AUTEL 2026", 14, 24);
+
+            // 2. METADONNÉES (Date & Numéro de reçu)
+            doc.setTextColor(60, 60, 60);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Date d'émission : ${new Date().toLocaleDateString('fr-FR')}`, 150, 52);
+
+            doc.setTextColor(99, 13, 23);
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.text(`REÇU OFFICIEL DE PRÉ-INSCRIPTION : ${d.refCamp}`, 14, 64);
+            
+            // Ligne de séparation élégante
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.5);
+            doc.line(14, 68, 196, 68);
+
+            // 3. BLOC INFORMATION PAROISSE
+            doc.setTextColor(99, 13, 23);
+            doc.setFontSize(12);
+            doc.text("STRUCTURE EXCLÉSIALE ET SITE", 14, 80);
+            
+            doc.setTextColor(40, 40, 40);
+            doc.setFont("helvetica", "bold"); doc.text("Paroisse :", 16, 90);
+            doc.setFont("helvetica", "normal"); doc.text(d.paroisse, 55, 90);
+            
+            doc.setFont("helvetica", "bold"); doc.text("Doyenné :", 16, 98);
+            doc.setFont("helvetica", "normal"); doc.text(d.doyenne, 55, 98);
+            
+            doc.setFont("helvetica", "bold"); doc.text("Lieu du Camp :", 16, 106);
+            doc.setFont("helvetica", "normal"); doc.text(d.lieuCamp, 55, 106);
+
+            // 4. BLOC RESPONSABLE DE L'INSCRIPTION
+            doc.setTextColor(99, 13, 23);
+            doc.setFont("helvetica", "bold");
+            doc.text("RESPONSABLE DOSSIER", 14, 120);
+            
+            doc.setTextColor(40, 40, 40);
+            doc.setFont("helvetica", "bold"); doc.text("Nom du déclarant :", 16, 130);
+            doc.setFont("helvetica", "normal"); doc.text(d.nomResponsable, 55, 130);
+            
+            doc.setFont("helvetica", "bold"); doc.text("Contact Mobile :", 16, 138);
+            doc.setFont("helvetica", "normal"); doc.text(d.telResponsable, 55, 138);
+            
+            doc.setFont("helvetica", "bold"); doc.text("Effectif inscrit :", 16, 146);
+            doc.setFont("helvetica", "normal"); doc.text(`${d.participants} enfant(s) servant(s) d'autel`, 55, 146);
+
+            // 5. TABLEAU COMPTABLE FINANCIER
+            doc.setTextColor(99, 13, 23);
+            doc.setFont("helvetica", "bold");
+            doc.text("DÉTAIL DES ENCAISSEMENTS", 14, 162);
+
+            // Entête du tableau
+            doc.setFillColor(240, 235, 230);
+            doc.rect(14, 168, 182, 8, 'F');
+            doc.setTextColor(40, 40, 40);
+            doc.setFontSize(10);
+            doc.text("Désignation des frais", 18, 173);
+            doc.text("Quantité", 110, 173);
+            doc.text("Montant total", 155, 173);
+
+            // Ligne 1 : Camp
+            doc.setFont("helvetica", "normal");
+            doc.text("Frais de participation au Camp (3 000 F / enfant)", 18, 183);
+            doc.text(`${d.participants}`, 115, 183);
+            doc.text(d.fraisCampStr, 155, 183);
+            doc.line(14, 187, 196, 187);
+
+            // Ligne 2 : Jeux
+            doc.text("Frais d'adhésion aux Grands Jeux (1 000 F / enfant)", 18, 194);
+            doc.text(`${d.participants}`, 115, 194);
+            doc.text(d.fraisJeuxStr, 155, 194);
+            
+            // Ligne de Total
+            doc.setLineWidth(0.8);
+            doc.setDrawColor(99, 13, 23);
+            doc.line(14, 198, 196, 198);
+            
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(99, 13, 23);
+            doc.setFontSize(11);
+            doc.text("MONTANT NET À PAYER", 18, 204);
+            doc.text(d.montantTotal, 155, 204);
+
+            // Cadre extérieur du tableau
+            doc.setLineWidth(0.4);
+            doc.setDrawColor(180, 180, 180);
+            doc.rect(14, 168, 182, 40, 'D');
+
+            // 6. QR CODE ET ZONE DE SIGNATURES CÔTE À CÔTE
+            if (qrCodeUrl) {
+                doc.addImage(qrCodeUrl, 'JPEG', 14, 218, 38, 38);
+            }
+
+            // Encadré de signature 1 : Le Responsable Paroissial
+            doc.setDrawColor(210, 210, 210);
+            doc.rect(60, 218, 64, 38, 'D');
+            doc.setTextColor(60, 60, 60);
+            doc.setFontSize(9);
+            doc.text("Signature du Responsable", 64, 224);
+            doc.text("qui a fait l'inscription :", 64, 228);
+
+            // Encadré de signature 2 : Le Trésorier Diocésain
+            doc.rect(132, 218, 64, 38, 'D');
+            doc.text("Signature & Cachet du", 136, 224);
+            doc.text("Responsable Diocésain :", 136, 228);
+
+            // 7. BAS DE PAGE COMPACT
+            doc.setTextColor(140, 140, 140);
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "italic");
+            doc.text("Ce document officiel doit être imprimé et présenté au secrétariat du diocèse pour validation définitive financière.", 14, 270);
+            doc.text("Camp des Servants d'Autel 2026 - Généré via l'application de gestion automatisée.", 14, 275);
+
+            // Téléchargement immédiat
+            doc.save(`Recu_Officiel_Camp2026_${d.paroisse.replace(/ /g, "_")}.pdf`);
+        }
+
+        // ENVOI VERS GOOGLE SHEETS
+        function envoyerVersGoogleForm(d) {
+            const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdO9TY_fF1fq7ISlJFLIMwSmikmN2-JxaPXFa8A4SMS_26Lhw/formResponse";
+            
+            const formData = new FormData();
+            formData.append("entry.1100230385", d.refCamp);
+            formData.append("entry.1508747386", d.paroisse);
+            formData.append("entry.991001714", d.doyenne);
+            formData.append("entry.1239133451", d.participants);
+            formData.append("entry.944029782", d.nomResponsable);
+            formData.append("entry.723121214", d.telResponsable);
+            formData.append("entry.367846832", d.montantTotal);
+            
+            // REMPLACE CE TEXTE PAR LE NUMÉRO D'ENTRY OBTENU DEPUIS TON GOOGLE FORM (RELIÉ À LA QUESTION "Réponse Courte" POUR LE SITE) :
+            formData.append("entry.197350379", d.lieuCamp);
+
+            fetch(googleFormUrl, {
+                method: "POST",
+                mode: "no-cors",
+                body: formData
+            }).catch(error => console.log("Sauvegarde synchronisée."));
+        }
+    </script>
+</body>
+</html>
