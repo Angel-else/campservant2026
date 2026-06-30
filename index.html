@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servants d'Autel - Camp Annuel 2026</title>
     
-    <!-- FAVICON MODIFIÉ -->
     <link rel="icon" type="image/jpeg" href="favicon.jpeg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -105,7 +104,6 @@
         }
 
         #accueil {
-            /* ARRIÈRE-PLAN MODIFIÉ AVEC TON IMAGE LOCALE */
             background: linear-gradient(rgba(99, 13, 23, 0.88), rgba(44, 62, 80, 0.85)), url('servant.jpeg') no-repeat center center/cover;
             height: 90vh;
             display: flex;
@@ -287,7 +285,6 @@
 </head>
 <body>
 
-    <!-- NAVIGATION -->
     <header>
         <nav class="navbar">
             <a href="#accueil" class="logo">Camp Servants d'Autel <span>2026</span></a>
@@ -299,14 +296,12 @@
         </nav>
     </header>
 
-    <!-- BANNIÈRE D'ACCUEIL -->
     <section id="accueil">
         <h1>Camp Annuel des Servants d'Autel <span>Édition 2026</span></h1>
         <p>« Servir le Seigneur dans la joie et la sainteté. » Réunissons nos paroisses pour un moment de foi, de partage, de formation liturgique et de grands jeux fraternels !</p>
         <a href="#inscription" class="btn-cta">Inscrire ma Paroisse</a>
     </section>
 
-    <!-- MOT DE BIENVENUE -->
     <section id="presentation">
         <h2 class="section-title">Bienvenue au Camp 2026</h2>
         <div class="welcome-box">
@@ -315,7 +310,6 @@
         </div>
     </section>
 
-    <!-- FORMULAIRE D'INSCRIPTION -->
     <section id="inscription">
         <h2 class="section-title">Enregistrement de la Paroisse</h2>
         
@@ -354,7 +348,6 @@
                     </div>
                 </div>
 
-                <!-- TABLEAU DES RECAPITULATIFS FINANCIERS MIS À JOUR -->
                 <div class="finance-panel">
                     <div class="finance-line">
                         <span>Frais de participation enfants (4 000 F / tête) :</span>
@@ -363,6 +356,10 @@
                     <div class="finance-line">
                         <span>Frais de jeu fixe par paroisse :</span>
                         <span id="calculJeux">0 F CFA</span>
+                    </div>
+                    <div class="finance-line">
+                        <span>Document « Génie en Herbe » (fixe par paroisse) :</span>
+                        <span id="calculGenie">0 F CFA</span>
                     </div>
                     <div class="finance-line total">
                         <span>SOMME TOTALE À PAYER :</span>
@@ -376,19 +373,22 @@
     </section>
 
     <script>
-        // CONFIGURATION DES LOGIQUES COMPTABLES (4000F / tête et 4000F fixe)
+        // CONFIGURATION DES TARIFS MIS À JOUR
         const TARIF_PAR_TETE = 4000;
         const FRAIS_FIXE_JEUX = 4000;
+        const FRAIS_FIXE_GENIE = 1000; // Ajout du document Génie en Herbe
 
         function calculerFrais() {
             const nbr = parseInt(document.getElementById("participants").value) || 0;
             
             const totalEnfants = nbr * TARIF_PAR_TETE;
             const totalJeuxFixe = nbr > 0 ? FRAIS_FIXE_JEUX : 0;
-            const totalGeneral = totalEnfants + totalJeuxFixe;
+            const totalGenieFixe = nbr > 0 ? FRAIS_FIXE_GENIE : 0;
+            const totalGeneral = totalEnfants + totalJeuxFixe + totalGenieFixe;
 
             document.getElementById("calculCamp").textContent = totalEnfants.toLocaleString('fr-FR') + " F CFA";
             document.getElementById("calculJeux").textContent = totalJeuxFixe.toLocaleString('fr-FR') + " F CFA";
+            document.getElementById("calculGenie").textContent = totalGenieFixe.toLocaleString('fr-FR') + " F CFA";
             document.getElementById("calculTotal").textContent = totalGeneral.toLocaleString('fr-FR') + " F CFA";
         }
 
@@ -398,7 +398,8 @@
             const nbrParticipants = parseInt(document.getElementById("participants").value) || 0;
             const totalEnfants = nbrParticipants * TARIF_PAR_TETE;
             const totalJeuxFixe = FRAIS_FIXE_JEUX;
-            const totalFinances = totalEnfants + totalJeuxFixe;
+            const totalGenieFixe = FRAIS_FIXE_GENIE;
+            const totalFinances = totalEnfants + totalJeuxFixe + totalGenieFixe;
 
             const donnees = {
                 refCamp: "CSA-" + Math.floor(100000 + Math.random() * 900000),
@@ -410,6 +411,7 @@
                 telResponsable: document.getElementById("tel_resp").value,
                 fraisEnfantsStr: totalEnfants.toLocaleString('fr-FR') + " F CFA",
                 fraisJeuxStr: totalJeuxFixe.toLocaleString('fr-FR') + " F CFA",
+                fraisGenieStr: totalGenieFixe.toLocaleString('fr-FR') + " F CFA",
                 montantTotal: totalFinances.toLocaleString('fr-FR') + " F CFA"
             };
 
@@ -419,12 +421,12 @@
             genererFicheFraisPDF(donnees, qrSrcCode);
             envoyerVersGoogleForm(donnees);
 
-            alert("Succès ! L'inscription a été enregistrée. Votre reçu officiel et personnalisé a été téléchargé.");
+            alert("Succès ! L'inscription a été enregistrée. Votre reçu officiel prenant en compte les frais de Génie en Herbe a été téléchargé.");
             document.getElementById("campForm").reset();
             calculerFrais();
         });
 
-        // GENERATION DU PDF PROFESSIONNEL AVEC LES NOUVEAUX CALCULS
+        // GENERATION DU PDF OFFICIEL AVEC LE NOUVEAU TABLEAU COMPTABLE
         function genererFicheFraisPDF(d, qrCodeUrl) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -485,7 +487,7 @@
             doc.setFont("helvetica", "bold"); doc.text("Effectif inscrit :", 16, 146);
             doc.setFont("helvetica", "normal"); doc.text(`${d.participants} enfant(s) servant(s) d'autel`, 55, 146);
 
-            // 5. TABLEAU COMPTABLE DU PDF
+            // 5. TABLEAU COMPTABLE DU PDF MIS À JOUR (4 LIGNES)
             doc.setTextColor(99, 13, 23);
             doc.setFont("helvetica", "bold");
             doc.text("DÉTAIL DES ENCAISSEMENTS", 14, 162);
@@ -501,58 +503,64 @@
 
             // Ligne 1 : Par tête
             doc.setFont("helvetica", "normal");
-            doc.text("Frais d'inscription individuels (4 000 F / enfant)", 18, 183);
-            doc.text(`${d.participants} enfant(s)`, 110, 183);
-            doc.text(d.fraisEnfantsStr, 155, 183);
-            doc.line(14, 187, 196, 187);
+            doc.text("Frais d'inscription individuels (4 000 F / enfant)", 18, 182);
+            doc.text(`${d.participants} enfant(s)`, 110, 182);
+            doc.text(d.fraisEnfantsStr, 155, 182);
+            doc.line(14, 186, 196, 186);
 
             // Ligne 2 : Forfait fixe jeux
-            doc.text("Frais forfaitaires de jeu (par Paroisse)", 18, 194);
-            doc.text("Forfait unique", 110, 194);
-            doc.text(d.fraisJeuxStr, 155, 194);
+            doc.text("Frais forfaitaires de jeu (par Paroisse)", 18, 192);
+            doc.text("Forfait unique", 110, 192);
+            doc.text(d.fraisJeuxStr, 155, 192);
+            doc.line(14, 196, 196, 196);
+
+            // Ligne 3 : Document Génie en herbe
+            doc.text("Frais d'obtention du Document « Génie en Herbe »", 18, 202);
+            doc.text("Forfait unique", 110, 202);
+            doc.text(d.fraisGenieStr, 155, 202);
             
             // Ligne de Total
             doc.setLineWidth(0.8);
             doc.setDrawColor(99, 13, 23);
-            doc.line(14, 198, 196, 198);
+            doc.line(14, 206, 196, 206);
             
             doc.setFont("helvetica", "bold");
             doc.setTextColor(99, 13, 23);
             doc.setFontSize(11);
-            doc.text("MONTANT NET À PAYER", 18, 204);
-            doc.text(d.montantTotal, 155, 204);
+            doc.text("MONTANT NET À PAYER", 18, 212);
+            doc.text(d.montantTotal, 155, 212);
 
             doc.setLineWidth(0.4);
             doc.setDrawColor(180, 180, 180);
-            doc.rect(14, 168, 182, 40, 'D');
+            doc.rect(14, 168, 182, 49, 'D'); // Hauteur ajustée à 49 pour contenir la 3e ligne
 
-            // 6. QR CODE ET ZONE DE SIGNATURES
+            // 6. QR CODE ET ZONE DE SIGNATURES (Y descendu de 10mm pour éviter les chevauchements)
             if (qrCodeUrl) {
-                doc.addImage(qrCodeUrl, 'JPEG', 14, 218, 38, 38);
+                doc.addImage(qrCodeUrl, 'JPEG', 14, 224, 34, 34);
             }
 
             doc.setDrawColor(210, 210, 210);
-            doc.rect(60, 218, 64, 38, 'D');
+            doc.rect(56, 224, 66, 34, 'D');
             doc.setTextColor(60, 60, 60);
             doc.setFontSize(9);
-            doc.text("Signature du Responsable", 64, 224);
-            doc.text("qui a fait l'inscription :", 64, 228);
+            doc.text("Signature du Responsable", 59, 230);
+            doc.text("qui a fait l'inscription :", 59, 234);
 
-            doc.rect(132, 218, 64, 38, 'D');
-            doc.text("Signature & Cachet du", 136, 224);
-            doc.text("Responsable Diocésain :", 136, 228);
+            doc.rect(130, 224, 66, 34, 'D');
+            doc.text("Signature & Cachet du", 133, 230);
+            doc.text("Responsable Diocésain :", 133, 234);
 
             // 7. BAS DE PAGE
             doc.setTextColor(140, 140, 140);
             doc.setFontSize(8);
             doc.setFont("helvetica", "italic");
-            doc.text("Ce document officiel doit être imprimé et présenté au secrétariat du diocèse pour validation définitive financière.", 14, 270);
-            doc.text("Camp des Servants d'Autel 2026 - Généré via l'application de gestion automatisée.", 14, 275);
+            doc.text("Ce document officiel doit être imprimé et présenté au secrétariat du diocèse pour validation définitive financière.", 14, 272);
+            doc.text("Camp des Servants d'Autel 2026 - Généré via l'application de gestion automatisée.", 14, 276);
 
             doc.save(`Recu_Officiel_Camp2026_${d.paroisse.replace(/ /g, "_")}.pdf`);
         }
 
-        // ENVOI VERS GOOGLE SHEETS ENREGISTRÉ
+        // ENVOI VERS GOOGLE FORM
         function envoyerVersGoogleForm(d) {
             const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdO9TY_fF1fq7ISlJFLIMwSmikmN2-JxaPXFa8A4SMS_26Lhw/formResponse";
             
@@ -564,9 +572,7 @@
             formData.append("entry.944029782", d.nomResponsable);
             formData.append("entry.723121214", d.telResponsable);
             formData.append("entry.367846832", d.montantTotal);
-            
-            // MODIFICATION APPORTÉE : CLÉ DE TA QUESTION "RÉPONSE COURTE" LIÉE AU SITE INTÉGRÉE ICI
-            formData.append("entry.197350379", d.lieuCamp);
+            formData.append("entry.197350379", d.lieuCamp); // Ton numéro d'entry relié
 
             fetch(googleFormUrl, {
                 method: "POST",
