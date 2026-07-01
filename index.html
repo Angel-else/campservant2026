@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servants d'Autel - Camp Annuel 2026</title>
     
+    <meta property="og:title" content="Camp Annuel des Servants d'Autel 2026">
+    <meta property="og:description" content="Inscriptions officielles pour le Camp Annuel 2026. Enregistrez votre paroisse et téléchargez votre reçu.">
+    <meta property="og:image" content="logo.jpeg"> <meta property="og:type" content="website">
+
     <link rel="icon" type="image/jpeg" href="favicon.jpeg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -16,6 +20,7 @@
             --bg-color: #fcfbf9;
             --card-bg: #ffffff;
             --text-color: #2f3542;
+            --error-color: #ff4d4d;
         }
 
         * {
@@ -50,14 +55,28 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 10px 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--secondary-color);
         }
 
         .logo {
             color: #fff;
             font-size: 22px;
             font-weight: bold;
-            text-decoration: none;
             letter-spacing: 0.5px;
         }
 
@@ -193,7 +212,10 @@
             gap: 20px;
         }
 
-        .form-group { margin-bottom: 22px; }
+        .form-group { 
+            margin-bottom: 22px; 
+            position: relative;
+        }
 
         label {
             display: block;
@@ -219,6 +241,14 @@
         input:focus {
             outline: none;
             border-color: var(--primary-color);
+        }
+
+        .error-msg {
+            color: var(--error-color);
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
         }
 
         .finance-panel {
@@ -287,7 +317,10 @@
 
     <header>
         <nav class="navbar">
-            <a href="#accueil" class="logo">Camp Servants d'Autel <span>2026</span></a>
+            <a href="#accueil" class="logo-container">
+                <img src="logo.jpeg" alt="Logo" class="logo-img">
+                <div class="logo">Camp Servants d'Autel <span>2026</span></div>
+            </a>
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
                 <li><a href="#presentation">Message</a></li>
@@ -319,17 +352,23 @@
                 <div class="form-group-row">
                     <div class="form-group">
                         <label for="paroisse">Nom de la Paroisse *</label>
-                        <input type="text" id="paroisse" required placeholder="Ex: Saint Michel">
+                        <input type="text" id="paroisse" required placeholder="Ex: Saint Michel"
+                               oninput="validerTexte(this)">
+                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
                     </div>
                     <div class="form-group">
                         <label for="doyenne">Nom du Doyenné *</label>
-                        <input type="text" id="doyenne" required placeholder="Ex: Doyenné Centre">
+                        <input type="text" id="doyenne" required placeholder="Ex: Doyenné Centre"
+                               oninput="validerTexte(this)">
+                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="lieuCamp">Lieu d'affectation du Camp *</label>
-                    <input type="text" id="lieuCamp" required placeholder="Ex: Paroisse Saint Michel de SEME KRAKE">
+                    <input type="text" id="lieuCamp" required placeholder="Ex: Paroisse Saint Michel de SEME KRAKE" 
+                             oninput="validerTexte(this)">
+                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
                 </div>
 
                 <div class="form-group">
@@ -340,11 +379,15 @@
                 <div class="form-group-row">
                     <div class="form-group">
                         <label for="nom_resp">Nom & Prénom du Responsable *</label>
-                        <input type="text" id="nom_resp" required placeholder="Ex: M. Jean KOFFI">
+                        <input type="text" id="nom_resp" required placeholder="Ex: Jean KOFFI"
+                               oninput="validerTexte(this)">
+                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
                     </div>
                     <div class="form-group">
                         <label for="tel_resp">Téléphone du Responsable *</label>
-                        <input type="tel" id="tel_resp" required placeholder="Ex: 0102030405">
+                        <input type="tel" id="tel_resp" required placeholder="Ex: 0102030405"
+                               oninput="validerChiffres(this)">
+                        <div class="error-msg">⚠️ Uniquement des chiffres sans lettres ni espaces.</div>
                     </div>
                 </div>
 
@@ -373,10 +416,47 @@
     </section>
 
     <script>
-        // CONFIGURATION DES TARIFS MIS À JOUR
         const TARIF_PAR_TETE = 4000;
         const FRAIS_FIXE_JEUX = 4000;
-        const FRAIS_FIXE_GENIE = 1000; // Ajout du document Génie en Herbe
+        const FRAIS_FIXE_GENIE = 1000;
+
+        let logoBase64 = null;
+
+        // Pré-chargement automatique du logo au format JPEG
+        window.addEventListener('DOMContentLoaded', () => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = 'logo.jpeg';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = this.width;
+                canvas.height = this.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(this, 0, 0);
+                logoBase64 = canvas.toDataURL('image/jpeg');
+            };
+        });
+
+        // Fonctions de validation
+        function validerTexte(input) {
+            const errorDiv = input.nextElementSibling;
+            if (/[0-9]/.test(input.value)) {
+                errorDiv.style.display = 'block';
+                input.value = input.value.replace(/[0-9]/g, '');
+            } else {
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        function validerChiffres(input) {
+            const errorDiv = input.nextElementSibling;
+            if (/[^0-9]/.test(input.value)) {
+                errorDiv.style.display = 'block';
+                input.value = input.value.replace(/[^0-9]/g, '');
+            } else {
+                errorDiv.style.display = 'none';
+            }
+        }
 
         function calculerFrais() {
             const nbr = parseInt(document.getElementById("participants").value) || 0;
@@ -426,7 +506,6 @@
             calculerFrais();
         });
 
-        // GENERATION DU PDF OFFICIEL AVEC LE NOUVEAU TABLEAU COMPTABLE
         function genererFicheFraisPDF(d, qrCodeUrl) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -437,10 +516,18 @@
             doc.setFillColor(212, 175, 55);
             doc.rect(0, 38, 220, 2.5, 'F');
             
-            doc.setTextColor(255, 255, 255);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(18);
-            doc.text("CAMP ANNUEL DES SERVANTS D'AUTEL 2026", 14, 24);
+            if (logoBase64) {
+                doc.addImage(logoBase64, 'JPEG', 14, 6, 25, 25);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(16);
+                doc.text("CAMP ANNUEL DES SERVANTS D'AUTEL 2026", 45, 24);
+            } else {
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(18);
+                doc.text("CAMP ANNUEL DES SERVANTS D'AUTEL 2026", 14, 24);
+            }
 
             // 2. METADONNÉES
             doc.setTextColor(60, 60, 60);
@@ -460,7 +547,7 @@
             // 3. BLOC INFORMATION PAROISSE
             doc.setTextColor(99, 13, 23);
             doc.setFontSize(12);
-            doc.text("STRUCTURE EXCLÉSIALE ET SITE", 14, 80);
+            doc.text("STRUCTURE ECCLÉSIALE ET SITE", 14, 80);
             
             doc.setTextColor(40, 40, 40);
             doc.setFont("helvetica", "bold"); doc.text("Paroisse :", 16, 90);
@@ -487,12 +574,11 @@
             doc.setFont("helvetica", "bold"); doc.text("Effectif inscrit :", 16, 146);
             doc.setFont("helvetica", "normal"); doc.text(`${d.participants} enfant(s) servant(s) d'autel`, 55, 146);
 
-            // 5. TABLEAU COMPTABLE DU PDF MIS À JOUR (4 LIGNES)
+            // 5. TABLEAU COMPTABLE
             doc.setTextColor(99, 13, 23);
             doc.setFont("helvetica", "bold");
             doc.text("DÉTAIL DES ENCAISSEMENTS", 14, 162);
 
-            // Entête
             doc.setFillColor(240, 235, 230);
             doc.rect(14, 168, 182, 8, 'F');
             doc.setTextColor(40, 40, 40);
@@ -501,25 +587,21 @@
             doc.text("Quantité / Type", 110, 173);
             doc.text("Montant total", 155, 173);
 
-            // Ligne 1 : Par tête
             doc.setFont("helvetica", "normal");
             doc.text("Frais d'inscription individuels (4 000 F / enfant)", 18, 182);
             doc.text(`${d.participants} enfant(s)`, 110, 182);
             doc.text(d.fraisEnfantsStr, 155, 182);
             doc.line(14, 186, 196, 186);
 
-            // Ligne 2 : Forfait fixe jeux
             doc.text("Frais forfaitaires de jeu (par Paroisse)", 18, 192);
             doc.text("Forfait unique", 110, 192);
             doc.text(d.fraisJeuxStr, 155, 192);
             doc.line(14, 196, 196, 196);
 
-            // Ligne 3 : Document Génie en herbe
             doc.text("Frais d'obtention du Document « Génie en Herbe »", 18, 202);
             doc.text("Forfait unique", 110, 202);
             doc.text(d.fraisGenieStr, 155, 202);
             
-            // Ligne de Total
             doc.setLineWidth(0.8);
             doc.setDrawColor(99, 13, 23);
             doc.line(14, 206, 196, 206);
@@ -532,9 +614,9 @@
 
             doc.setLineWidth(0.4);
             doc.setDrawColor(180, 180, 180);
-            doc.rect(14, 168, 182, 49, 'D'); // Hauteur ajustée à 49 pour contenir la 3e ligne
+            doc.rect(14, 168, 182, 49, 'D');
 
-            // 6. QR CODE ET ZONE DE SIGNATURES (Y descendu de 10mm pour éviter les chevauchements)
+            // 6. QR CODE ET ZONE DE SIGNATURES
             if (qrCodeUrl) {
                 doc.addImage(qrCodeUrl, 'JPEG', 14, 224, 34, 34);
             }
@@ -550,7 +632,6 @@
             doc.text("Signature & Cachet du", 133, 230);
             doc.text("Responsable Diocésain :", 133, 234);
 
-            // 7. BAS DE PAGE
             doc.setTextColor(140, 140, 140);
             doc.setFontSize(8);
             doc.setFont("helvetica", "italic");
@@ -560,7 +641,6 @@
             doc.save(`Recu_Officiel_Camp2026_${d.paroisse.replace(/ /g, "_")}.pdf`);
         }
 
-        // ENVOI VERS GOOGLE FORM
         function envoyerVersGoogleForm(d) {
             const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdO9TY_fF1fq7ISlJFLIMwSmikmN2-JxaPXFa8A4SMS_26Lhw/formResponse";
             
@@ -572,7 +652,7 @@
             formData.append("entry.944029782", d.nomResponsable);
             formData.append("entry.723121214", d.telResponsable);
             formData.append("entry.367846832", d.montantTotal);
-            formData.append("entry.197350379", d.lieuCamp); // Ton numéro d'entry relié
+            formData.append("entry.197350379", d.lieuCamp);
 
             fetch(googleFormUrl, {
                 method: "POST",
