@@ -130,7 +130,7 @@
 
                 <div class="form-group">
                     <label for="codeDiocese">Code d'Autorisation Diocésain <span class="req">*</span></label>
-                    <input type="text" id="codeDiocese" class="input-auth" required placeholder="Ex: JFS-VIE0">
+                    <input type="text" id="codeDiocese" class="input-auth" required placeholder="Ex: JFS-NOVA">
                 </div>
 
                 <div class="finance-panel">
@@ -150,54 +150,19 @@
     </footer>
 
     <script>
-        // URL de réponse de votre Google Form exact
         const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHziHxnXKMT6_s1bOySeRe76vqxOIFItvzwCJtWVPei7QLpg/formResponse";
         const TARIF_PAR_ENFANT = 300;
 
-        const HASHES_CODES_VALIDES = [
-            "e888a7c2e3914a1c5d98cf778fb8f7a6064f7b6051786ba11bd90dcbc5edee67", // JFS-FOI1
-            "cfdbad793fdf6c6a23719714856a9e1e9c5658e24c2edcd636fecf5dd6992dd0", // JFS-LIT2
-            "ed57ea6837eb5fdfba16dd483ea4e286828fe617eb04cc8ce7ebfb566a707172", // JFS-ALT3
-            "18b7d90e960fe11246c4fa1edc4c361eb2dd0bb097fb1f2d24bd47b2c01d9f48", // JFS-DEV4
-            "be595eb4aa995efba10bfda44265cc2aeb5ffcfda74b0965d1dcf5ed134fb33d", // JFS-SAN5
-            "f9d784a961ff39fe9dbe39f88d2d6d0391d0ca333f2a8904df9faec096231d68", // JFS-GLO6
-            "efee6f6dcc126eec11e4bfbe132808c1a852dbff757276587be177b9605bd261", // JFS-SAC7
-            "7e43685e1ea1f93f5a538209ebed0ebc94a50f757f4fb2db26a79e4fbcc37f8f", // JFS-CHR8
-            "cb55a022b7a95079a4ecfbef7df6dccb8ae9d71c1bbdd254eb2d1fdfcdd68a86", // JFS-VOC9
-            "00b953d26aa2cf4ed81e3a6283db81d6d3ef3740e2a220fc5cf8a62f55ff3530", // JFS-ZEL0
-            "60e1d09df8c80b6d4b553e1a0c0a96bf6f1eb30d41dfbb905aa06a0be96ff449", // JFS-PAX1
-            "dc4c3ef0caac05f937989dcd8e10bcbb8134789ebf3be4d59a584065403561b3", // JFS-LUX2
-            "0b5fe6e5c8e3ddf7238cae105e4aa2948ca240f98bebc20703c150c226e6d425", // JFS-REX3
-            "fce327bb3fe33c3bfbe35fbef6f1ebcf719545dc6182bf5dd3e98cc6ca87cb5d", // JFS-VIA4
-            "a5015b6fe1d451a37c5683ca54db4d5f4922e964726eeb6f18feaa9ea499595f", // JFS-DON5
-            "46bc92e6fb1bf6f7ff0d04db96c34fe1b0696eb6fbda1bf73bc2a13dc839cdcc", // JFS-JOI6
-            "1fa3fe6273ebc1097e1635338ff9134c4b69ee9aa9ea8a38ecae50aeb4010b4f", // JFS-AMR7
-            "eec8a3356bc0a867edb7f2cb09bd572d42bb01dd2eb00d045d475ef2ebba0f6a", // JFS-PIE8
-            "cbdf8464fcbfbb75133dff6a394ec59b6febe7198bbdaef52ec1e7c5bc0fb9d0", // JFS-SVP9
-            "0c23ef3c7cc681a2da3cd386622ec962947154eb535ae71b9319ee020c2d30ed", // JFS-DOM0
-            "fa94a656a815a5fbc40ceef0f0eb8971f114f10a8ddff0ffed3d706e23293e5d", // JFS-DOU1
-            "18d9ccdfc45dbd3eb2ea8db1bbf2faebfe05dfb7582eb7d88566ed84074c76a3", // JFS-FOR2
-            "f268bde3c3f2dbe0b7f80db4ebef72bc46bb22ed7ea4bb55c3c0ef78c8577382", // JFS-CON3
-            "ddb8f5ee7431f77d33dcfefbb7ed74bd4232c744f4bfcae2ef480be63deeb603", // JFS-PAT4
-            "a8e63a34a8e8055bfbe9de271032df51774e11cb4dfeb37bb96f21dfddb9d3ef", // JFS-PER5
-            "b6ffda45bcf68f76dfcfec109ff60e2dbf3513ca44199bd62cf2fef2fe6dd6bc", // JFS-BEN6
-            "19de748c0ceefcf0042dbbeff45a337f71cbefbf521943fb72fcbc7d7eb0b10a", // JFS-GRA7
-            "7a5cfc02b9ffed0398f59d57a4eb31d9ce09eb47bd15ff80db45ed2dbf55cb3b", // JFS-EAU8
-            "07198a2eb8bb0f1c30e37bc2ebef0b1d3efde49fb59f42fbcd3775fbb45fe00a", // JFS-VIN9
-            "06aa5bb54a48dc7dc372aeec332bfbd16cf29d01be8a296eeb8a1835fb1d4286", // JFS-VIE0
-            "32e185012353ef820eb7dfd6771bcfa977cf96677fdd1ff2402ff3e414c22998", // JFS-PAX3
-            "da448c5e62fec2e5f5f4039ec72ccfce21df9ca6e00185eeb8eebcead9eef547", // JFS-LUM4
-            "7be678fdbf3edfb56b8e3aeb5c276b50ea05c755ec50eebbe28ef555bdfe3212", // JFS-ESP5
-            "902c2e0b503027efef9c80d5d1c24fa2e16d9ef7fb197ffb7625fb4938df1b53", // JFS-VER6
-            "5c37894a8f9eb9d59edfbfa9d7aa7945d7a6be3df740df09a63aa68ff8e7b1cb"  // JFS-NOVA
+        // Liste directe des codes valides en texte clair
+        const CODES_VALIDES = [
+            "JFS-FOI1", "JFS-LIT2", "JFS-ALT3", "JFS-DEV4", "JFS-SAN5",
+            "JFS-GLO6", "JFS-SAC7", "JFS-CHR8", "JFS-VOC9", "JFS-ZEL0",
+            "JFS-PAX1", "JFS-LUX2", "JFS-REX3", "JFS-VIA4", "JFS-DON5",
+            "JFS-JOI6", "JFS-AMR7", "JFS-PIE8", "JFS-SVP9", "JFS-DOM0",
+            "JFS-DOU1", "JFS-FOR2", "JFS-CON3", "JFS-PAT4", "JFS-PER5",
+            "JFS-BEN6", "JFS-GRA7", "JFS-EAU8", "JFS-VIN9", "JFS-VIE0",
+            "JFS-PAX3", "JFS-LUM4", "JFS-ESP5", "JFS-VER6", "JFS-NOVA"
         ];
-
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
 
         function calculerFrais() {
             const nbr = parseInt(document.getElementById("participants").value) || 0;
@@ -206,15 +171,14 @@
             document.getElementById("calculTotal").textContent = total.toLocaleString('fr-FR') + " F CFA";
         }
 
-        document.getElementById("formationForm").addEventListener("submit", async function(e) {
+        document.getElementById("formationForm").addEventListener("submit", function(e) {
             e.preventDefault();
             const alertBanner = document.getElementById("alertBanner");
             alertBanner.style.display = "none";
 
             const codeSaisi = document.getElementById("codeDiocese").value.trim().toUpperCase();
-            const hashSaisi = await sha256(codeSaisi);
 
-            if (!HASHES_CODES_VALIDES.includes(hashSaisi)) {
+            if (!CODES_VALIDES.includes(codeSaisi)) {
                 alertBanner.className = "alert-banner error";
                 alertBanner.textContent = "❌ Code d'autorisation diocésain invalide !";
                 alertBanner.style.display = "block";
@@ -237,7 +201,7 @@
                 montantTotalStr: totalFinances.toLocaleString('fr-FR') + " F CFA"
             };
 
-            // Envoi direct vers Google Forms avec les VRAIS identifiants entry.XXXXXX
+            // Envoi direct vers Google Forms avec vos identifiants entry exacts
             const formData = new FormData();
             formData.append("entry.1706240212", donnees.horodateur);
             formData.append("entry.1491761616", donnees.refRecu);
