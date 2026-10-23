@@ -3,316 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servants d'Autel - Camp Annuel 2026</title>
+    <title>Journée de Formation Sectorielle - Servants d'Autel 2026</title>
     
-    <meta property="og:title" content="Camp Annuel des Servants d'Autel 2026">
-    <meta property="og:description" content="Inscriptions officielles pour le Camp Annuel 2026. Enregistrez votre paroisse et téléchargez votre reçu.">
-    <meta property="og:image" content="https://campservant2026.netlify.app/logo.jpeg">
-    <meta property="og:url" content="https://campservant2026.netlify.app">
-    <meta property="og:type" content="website">
-
-    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <!-- Script jsPDF via CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         :root {
-            --primary-color: #630d17; /* Rouge Bordeaux Liturgique */
-            --secondary-color: #d4af37; /* Or / Doré */
-            --accent-color: #2c3e50;
-            --bg-color: #fcfbf9;
+            --primary-color: #1e293b; /* Bleu Nuit Solennel */
+            --primary-dark: #0f172a;
+            --secondary-color: #d97706; /* Or / Ambre */
+            --secondary-hover: #b45309;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #2f3542;
-            --error-color: #ff4d4d;
+            --text-color: #1e293b;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --border-color: #cbd5e1;
         }
 
-        * {
-            box-shadow: none;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            scroll-behavior: smooth;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: var(--primary-color);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            border-bottom: 3px solid var(--secondary-color);
-        }
-
-        .navbar {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid var(--secondary-color);
-        }
-
-        .logo {
-            color: #fff;
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-
-        .logo span { color: var(--secondary-color); }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-        }
-
-        .nav-links a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
+        header { background-color: var(--primary-color); position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; border-bottom: 3px solid var(--secondary-color); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .navbar { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-badge { width: 42px; height: 42px; background-color: var(--secondary-color); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; border: 2px solid #fff; }
+        .logo-text { color: #fff; font-size: 20px; font-weight: 800; }
+        .logo-text span { color: var(--secondary-color); }
+        .nav-links { display: flex; list-style: none; gap: 25px; }
+        .nav-links a { color: #fff; text-decoration: none; font-weight: 600; font-size: 15px; transition: color 0.3s; }
         .nav-links a:hover { color: var(--secondary-color); }
 
-        section {
-            padding: 100px 20px 60px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        section { padding: 100px 20px 60px 20px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 28px; color: var(--primary-color); margin-bottom: 35px; text-transform: uppercase; font-weight: 800; }
+        .section-title::after { content: ''; display: block; width: 70px; height: 4px; background-color: var(--secondary-color); margin: 8px auto 0 auto; border-radius: 2px; }
 
-        .section-title {
-            text-align: center;
-            font-size: 30px;
-            color: var(--primary-color);
-            margin-bottom: 35px;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 4px;
-            background-color: var(--secondary-color);
-            margin: 8px auto 0 auto;
-            border-radius: 2px;
-        }
-
-        #accueil {
-            background: linear-gradient(rgba(99, 13, 23, 0.88), rgba(44, 62, 80, 0.85)), url('servant.jpeg') no-repeat center center/cover;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #fff;
-            padding-top: 100px;
-            max-width: 100%;
-            border-bottom: 5px solid var(--secondary-color);
-        }
-
-        #accueil h1 {
-            font-size: 44px;
-            margin-bottom: 15px;
-            font-weight: 800;
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
-            letter-spacing: 1px;
-        }
-
+        #accueil { background: linear-gradient(rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.90)); min-height: 75vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #fff; border-bottom: 5px solid var(--secondary-color); padding-top: 110px; }
+        #accueil h1 { font-size: 40px; margin-bottom: 15px; font-weight: 800; max-width: 900px; }
         #accueil h1 span { color: var(--secondary-color); }
+        #accueil p { font-size: 19px; max-width: 780px; margin-bottom: 35px; color: #e2e8f0; }
+        .badge-price { background-color: rgba(217, 119, 6, 0.2); border: 1px solid var(--secondary-color); color: #fcd34d; padding: 6px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; }
+        .btn-cta { background-color: var(--secondary-color); color: #fff; padding: 15px 38px; text-decoration: none; font-weight: 800; border-radius: 30px; text-transform: uppercase; transition: 0.3s; }
+        .btn-cta:hover { background-color: var(--secondary-hover); }
 
-        #accueil p {
-            font-size: 20px;
-            max-width: 800px;
-            margin-bottom: 35px;
-            color: #f7f1e3;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-        }
+        .form-container { max-width: 750px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid var(--border-color); }
+        .form-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; margin-bottom: 7px; font-weight: 700; color: var(--primary-color); font-size: 13px; text-transform: uppercase; }
+        label .req { color: var(--error-color); }
+        input { width: 100%; padding: 13px 15px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; background-color: #f8fafc; color: var(--text-color); }
+        input:focus { outline: none; border-color: var(--secondary-color); background-color: #fff; }
+        input.input-auth { border-color: var(--secondary-color); background-color: #fffbeb; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
-        .btn-cta {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 14px 35px;
-            text-decoration: none;
-            font-weight: 800;
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-            transition: transform 0.3s, background 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .finance-panel { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); padding: 25px; margin: 30px 0; border-radius: 10px; color: #fff; border-left: 5px solid var(--secondary-color); }
+        .finance-panel h4 { color: var(--secondary-color); font-size: 15px; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px; }
+        .finance-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 15px; }
+        .finance-line.total { border-bottom: none; padding-top: 15px; font-size: 18px; font-weight: bold; }
+        .finance-line.total .amount { color: var(--secondary-color); font-size: 28px; font-weight: 800; }
 
-        .btn-cta:hover {
-            background-color: #c59b27;
-            transform: translateY(-2px);
-        }
+        .alert-banner { padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: none; }
+        .alert-banner.error { background-color: #fde8e8; color: #9b1c1c; border: 1px solid #f8b4b4; }
+        .alert-banner.success { background-color: #def7ec; color: #03543f; border: 1px solid #84e1bc; }
 
-        .welcome-box {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.04);
-            border-top: 5px solid var(--primary-color);
-            border-bottom: 5px solid var(--secondary-color);
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        button[type="submit"] { width: 100%; background-color: var(--secondary-color); color: #fff; padding: 16px; border: none; border-radius: 8px; font-size: 17px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        button[type="submit"]:hover { background-color: var(--secondary-hover); }
 
-        .welcome-box h3 {
-            color: var(--primary-color);
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .welcome-box p {
-            font-size: 16px;
-            color: #4b5563;
-            text-align: justify;
-        }
-
-        .form-container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 14px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.03);
-        }
-
-        .form-group-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .form-group { 
-            margin-bottom: 22px; 
-            position: relative;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 15px;
-            background-color: #fafbfc;
-            color: var(--text-color);
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .error-msg {
-            color: var(--error-color);
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .finance-panel {
-            background: linear-gradient(135deg, var(--primary-color), #40040b);
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 10px;
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .finance-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-        }
-
-        .finance-line.total {
-            border-bottom: none;
-            padding-top: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .finance-line.total .amount {
-            color: var(--secondary-color);
-            font-size: 26px;
-            font-weight: 800;
-        }
-
-        button {
-            width: 100%;
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 17px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-            transition: background 0.3s, transform 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        button:hover {
-            background-color: #c59b27;
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 768px) {
-            .navbar { flex-direction: column; gap: 12px; }
-            .form-group-row { grid-template-columns: 1fr; gap: 0; }
-            #accueil h1 { font-size: 30px; }
-            #accueil p { font-size: 16px; }
-            section { padding-top: 120px; }
-            .form-container { padding: 20px; }
-        }
+        footer { background-color: var(--primary-color); color: #cbd5e1; text-align: center; padding: 25px 20px; font-size: 14px; border-top: 3px solid var(--secondary-color); }
+        @media (max-width: 768px) { .form-group-row { grid-template-columns: 1fr; gap: 0; } }
     </style>
 </head>
 <body>
@@ -320,347 +78,213 @@
     <header>
         <nav class="navbar">
             <a href="#accueil" class="logo-container">
-                <img src="logo.jpeg" alt="Logo" class="logo-img">
-                <div class="logo">Camp Servants d'Autel <span>2026</span></div>
+                <div class="logo-badge">S</div>
+                <div class="logo-text">Formation Sectorielle <span>2026</span></div>
             </a>
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
-                <li><a href="#presentation">Message</a></li>
-                <li><a href="#inscription">Inscription Paroisse</a></li>
+                <li><a href="#inscription">Inscription</a></li>
             </ul>
         </nav>
     </header>
 
     <section id="accueil">
-        <h1>Camp Annuel des Servants d'Autel <span>Édition 2026</span></h1>
-        <p>« Servir le Seigneur dans la joie et la sainteté. » Réunissons nos paroisses pour un moment de foi, de partage, de formation liturgique et de grands jeux fraternels !</p>
-        <a href="#inscription" class="btn-cta">Inscrire ma Paroisse</a>
-    </section>
-
-    <section id="presentation">
-        <h2 class="section-title">Bienvenue au Camp 2026</h2>
-        <div class="welcome-box">
-            <h3>Chers Responsables et Servants d'Autel,</h3>
-            <p>L'édition 2026 de notre grand rassemblement annuel est enfin lancée ! Ce camp est l'occasion unique pour tous les servants d'autel de fortifier leur engagement spirituel, de parfaire leur service autour de l'autel, et de défendre fièrement les couleurs de leurs paroisses respectives lors des grandes compétitions et jeux prévus. Pour faciliter l'organisation logistique globale, chaque paroisse doit impérativement enregistrer son groupe de participants via ce portail unique. Remplissez consciencieusement les informations requises et téléchargez votre reçu de confirmation à présenter lors de votre arrivée sur le lieu du camp.</p>
-        </div>
+        <div class="badge-price">Participation : 300 F CFA par enfant</div>
+        <h1>Journée de Formation Sectorielle des <span>Servants d'Autel</span></h1>
+        <p>Enregistrez les effectifs de votre paroisse pour la grande journée de formation liturgique.</p>
+        <a href="#inscription" class="btn-cta">Inscrire mes Enfants</a>
     </section>
 
     <section id="inscription">
-        <h2 class="section-title">Enregistrement de la Paroisse</h2>
-        
+        <h2 class="section-title">Inscription de la Paroisse</h2>
         <div class="form-container">
-            <form id="campForm">
-                
+            <div id="alertBanner" class="alert-banner"></div>
+
+            <form id="formationForm">
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label for="paroisse">Nom de la Paroisse *</label>
-                        <input type="text" id="paroisse" required placeholder="Ex: Saint Michel"
-                               oninput="validerTexte(this)">
-                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
+                        <label for="paroisse">Nom de la Paroisse <span class="req">*</span></label>
+                        <input type="text" id="paroisse" required placeholder="Ex: Sainte Jeanne d'Arc">
                     </div>
                     <div class="form-group">
-                        <label for="doyenne">Nom du Doyenné *</label>
-                        <input type="text" id="doyenne" required placeholder="Ex: Doyenné Centre"
-                               oninput="validerTexte(this)">
-                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
+                        <label for="doyenne">Doyenné / Secteur <span class="req">*</span></label>
+                        <input type="text" id="doyenne" required placeholder="Ex: Doyenné Saint Pierre">
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="lieuCamp">Lieu d'affectation du Camp *</label>
-                    <input type="text" id="lieuCamp" required placeholder="Ex: Paroisse Saint Michel de SEME KRAKE" 
-                             oninput="validerTexte(this)">
-                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="participants">Nombre total de participants (enfants) *</label>
-                    <input type="number" id="participants" min="1" required placeholder="Ex: 10" oninput="calculerFrais()">
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label for="nom_resp">Nom & Prénom du Responsable *</label>
-                        <input type="text" id="nom_resp" required placeholder="Ex: Jean KOFFI"
-                               oninput="validerTexte(this)">
-                        <div class="error-msg">⚠️ Ce champ accepte uniquement les lettres.</div>
+                        <label for="nom_resp">Nom & Prénom du Responsable <span class="req">*</span></label>
+                        <input type="text" id="nom_resp" required placeholder="Ex: Pierre AKPOVI">
                     </div>
                     <div class="form-group">
-                        <label for="tel_resp">Téléphone du Responsable *</label>
-                        <input type="tel" id="tel_resp" required placeholder="Ex: 0102030405"
-                               oninput="validerChiffres(this)">
-                        <div class="error-msg">⚠️ Uniquement des chiffres sans lettres ni espaces.</div>
+                        <label for="tel_resp">Téléphone du Responsable <span class="req">*</span></label>
+                        <input type="tel" id="tel_resp" required placeholder="Ex: 0190807060">
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="participants">Nombre total d'enfants participants <span class="req">*</span></label>
+                    <input type="number" id="participants" min="1" required placeholder="Nombre d'enfants" oninput="calculerFrais()">
+                </div>
+
+                <div class="form-group">
+                    <label for="codeDiocese">Code d'Autorisation Diocésain <span class="req">*</span></label>
+                    <input type="text" id="codeDiocese" class="input-auth" required placeholder="Ex: JFS-VIE0">
                 </div>
 
                 <div class="finance-panel">
-                    <div class="finance-line">
-                        <span>Frais de participation enfants (4 000 F / tête) :</span>
-                        <span id="calculCamp">0 F CFA</span>
-                    </div>
-                    <div class="finance-line">
-                        <span>Frais de jeu fixe par paroisse :</span>
-                        <span id="calculJeux">0 F CFA</span>
-                    </div>
-                    <div class="finance-line">
-                        <span>Document « Génie en Herbe » (fixe par paroisse) :</span>
-                        <span id="calculGenie">0 F CFA</span>
-                    </div>
-                    <div class="finance-line total">
-                        <span>SOMME TOTALE À PAYER :</span>
-                        <span class="amount" id="calculTotal">0 F CFA</span>
-                    </div>
+                    <h4>Récapitulatif Financier</h4>
+                    <div class="finance-line"><span>Frais par enfant :</span><span>300 F CFA</span></div>
+                    <div class="finance-line"><span>Nombre d'enfants :</span><span id="calculNbEnfants">0 enfant</span></div>
+                    <div class="finance-line total"><span>TOTAL À PAYER :</span><span class="amount" id="calculTotal">0 F CFA</span></div>
                 </div>
 
-                <button type="submit">Valider l'inscription & Télécharger le Reçu PDF</button>
+                <button type="submit" id="submitBtn">Valider & Télécharger le Reçu PDF</button>
             </form>
         </div>
     </section>
 
+    <footer>
+        <p>&copy; 2026 - Journée de Formation Sectorielle des Servants d'Autel. Tous droits réservés.</p>
+    </footer>
+
     <script>
-        const TARIF_PAR_TETE = 4000;
-        const FRAIS_FIXE_JEUX = 4000;
-        const FRAIS_FIXE_GENIE = 1000;
+        // URL de réponse de votre Google Form exact
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHziHxnXKMT6_s1bOySeRe76vqxOIFItvzwCJtWVPei7QLpg/formResponse";
+        const TARIF_PAR_ENFANT = 300;
 
-        let logoBase64 = null;
+        const HASHES_CODES_VALIDES = [
+            "e888a7c2e3914a1c5d98cf778fb8f7a6064f7b6051786ba11bd90dcbc5edee67", // JFS-FOI1
+            "cfdbad793fdf6c6a23719714856a9e1e9c5658e24c2edcd636fecf5dd6992dd0", // JFS-LIT2
+            "ed57ea6837eb5fdfba16dd483ea4e286828fe617eb04cc8ce7ebfb566a707172", // JFS-ALT3
+            "18b7d90e960fe11246c4fa1edc4c361eb2dd0bb097fb1f2d24bd47b2c01d9f48", // JFS-DEV4
+            "be595eb4aa995efba10bfda44265cc2aeb5ffcfda74b0965d1dcf5ed134fb33d", // JFS-SAN5
+            "f9d784a961ff39fe9dbe39f88d2d6d0391d0ca333f2a8904df9faec096231d68", // JFS-GLO6
+            "efee6f6dcc126eec11e4bfbe132808c1a852dbff757276587be177b9605bd261", // JFS-SAC7
+            "7e43685e1ea1f93f5a538209ebed0ebc94a50f757f4fb2db26a79e4fbcc37f8f", // JFS-CHR8
+            "cb55a022b7a95079a4ecfbef7df6dccb8ae9d71c1bbdd254eb2d1fdfcdd68a86", // JFS-VOC9
+            "00b953d26aa2cf4ed81e3a6283db81d6d3ef3740e2a220fc5cf8a62f55ff3530", // JFS-ZEL0
+            "60e1d09df8c80b6d4b553e1a0c0a96bf6f1eb30d41dfbb905aa06a0be96ff449", // JFS-PAX1
+            "dc4c3ef0caac05f937989dcd8e10bcbb8134789ebf3be4d59a584065403561b3", // JFS-LUX2
+            "0b5fe6e5c8e3ddf7238cae105e4aa2948ca240f98bebc20703c150c226e6d425", // JFS-REX3
+            "fce327bb3fe33c3bfbe35fbef6f1ebcf719545dc6182bf5dd3e98cc6ca87cb5d", // JFS-VIA4
+            "a5015b6fe1d451a37c5683ca54db4d5f4922e964726eeb6f18feaa9ea499595f", // JFS-DON5
+            "46bc92e6fb1bf6f7ff0d04db96c34fe1b0696eb6fbda1bf73bc2a13dc839cdcc", // JFS-JOI6
+            "1fa3fe6273ebc1097e1635338ff9134c4b69ee9aa9ea8a38ecae50aeb4010b4f", // JFS-AMR7
+            "eec8a3356bc0a867edb7f2cb09bd572d42bb01dd2eb00d045d475ef2ebba0f6a", // JFS-PIE8
+            "cbdf8464fcbfbb75133dff6a394ec59b6febe7198bbdaef52ec1e7c5bc0fb9d0", // JFS-SVP9
+            "0c23ef3c7cc681a2da3cd386622ec962947154eb535ae71b9319ee020c2d30ed", // JFS-DOM0
+            "fa94a656a815a5fbc40ceef0f0eb8971f114f10a8ddff0ffed3d706e23293e5d", // JFS-DOU1
+            "18d9ccdfc45dbd3eb2ea8db1bbf2faebfe05dfb7582eb7d88566ed84074c76a3", // JFS-FOR2
+            "f268bde3c3f2dbe0b7f80db4ebef72bc46bb22ed7ea4bb55c3c0ef78c8577382", // JFS-CON3
+            "ddb8f5ee7431f77d33dcfefbb7ed74bd4232c744f4bfcae2ef480be63deeb603", // JFS-PAT4
+            "a8e63a34a8e8055bfbe9de271032df51774e11cb4dfeb37bb96f21dfddb9d3ef", // JFS-PER5
+            "b6ffda45bcf68f76dfcfec109ff60e2dbf3513ca44199bd62cf2fef2fe6dd6bc", // JFS-BEN6
+            "19de748c0ceefcf0042dbbeff45a337f71cbefbf521943fb72fcbc7d7eb0b10a", // JFS-GRA7
+            "7a5cfc02b9ffed0398f59d57a4eb31d9ce09eb47bd15ff80db45ed2dbf55cb3b", // JFS-EAU8
+            "07198a2eb8bb0f1c30e37bc2ebef0b1d3efde49fb59f42fbcd3775fbb45fe00a", // JFS-VIN9
+            "06aa5bb54a48dc7dc372aeec332bfbd16cf29d01be8a296eeb8a1835fb1d4286", // JFS-VIE0
+            "32e185012353ef820eb7dfd6771bcfa977cf96677fdd1ff2402ff3e414c22998", // JFS-PAX3
+            "da448c5e62fec2e5f5f4039ec72ccfce21df9ca6e00185eeb8eebcead9eef547", // JFS-LUM4
+            "7be678fdbf3edfb56b8e3aeb5c276b50ea05c755ec50eebbe28ef555bdfe3212", // JFS-ESP5
+            "902c2e0b503027efef9c80d5d1c24fa2e16d9ef7fb197ffb7625fb4938df1b53", // JFS-VER6
+            "5c37894a8f9eb9d59edfbfa9d7aa7945d7a6be3df740df09a63aa68ff8e7b1cb"  // JFS-NOVA
+        ];
 
-        // Pré-chargement automatique du logo au format JPEG
-        window.addEventListener('DOMContentLoaded', () => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.src = 'logo.jpeg';
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = this.width;
-                canvas.height = this.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(this, 0, 0);
-                logoBase64 = canvas.toDataURL('image/jpeg');
-            };
-        });
-
-        // Fonctions de validation
-        function validerTexte(input) {
-            const errorDiv = input.nextElementSibling;
-            if (/[0-9]/.test(input.value)) {
-                errorDiv.style.display = 'block';
-                input.value = input.value.replace(/[0-9]/g, '');
-            } else {
-                errorDiv.style.display = 'none';
-            }
-        }
-
-        function validerChiffres(input) {
-            const errorDiv = input.nextElementSibling;
-            if (/[^0-9]/.test(input.value)) {
-                errorDiv.style.display = 'block';
-                input.value = input.value.replace(/[^0-9]/g, '');
-            } else {
-                errorDiv.style.display = 'none';
-            }
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
         function calculerFrais() {
             const nbr = parseInt(document.getElementById("participants").value) || 0;
-            
-            const totalEnfants = nbr * TARIF_PAR_TETE;
-            const totalJeuxFixe = nbr > 0 ? FRAIS_FIXE_JEUX : 0;
-            const totalGenieFixe = nbr > 0 ? FRAIS_FIXE_GENIE : 0;
-            const totalGeneral = totalEnfants + totalJeuxFixe + totalGenieFixe;
-
-            document.getElementById("calculCamp").textContent = totalEnfants.toLocaleString('fr-FR') + " F CFA";
-            document.getElementById("calculJeux").textContent = totalJeuxFixe.toLocaleString('fr-FR') + " F CFA";
-            document.getElementById("calculGenie").textContent = totalGenieFixe.toLocaleString('fr-FR') + " F CFA";
-            document.getElementById("calculTotal").textContent = totalGeneral.toLocaleString('fr-FR') + " F CFA";
+            const total = nbr * TARIF_PAR_ENFANT;
+            document.getElementById("calculNbEnfants").textContent = nbr + (nbr > 1 ? " enfants" : " enfant");
+            document.getElementById("calculTotal").textContent = total.toLocaleString('fr-FR') + " F CFA";
         }
 
-        document.getElementById("campForm").addEventListener("submit", function(e) {
+        document.getElementById("formationForm").addEventListener("submit", async function(e) {
             e.preventDefault();
+            const alertBanner = document.getElementById("alertBanner");
+            alertBanner.style.display = "none";
+
+            const codeSaisi = document.getElementById("codeDiocese").value.trim().toUpperCase();
+            const hashSaisi = await sha256(codeSaisi);
+
+            if (!HASHES_CODES_VALIDES.includes(hashSaisi)) {
+                alertBanner.className = "alert-banner error";
+                alertBanner.textContent = "❌ Code d'autorisation diocésain invalide !";
+                alertBanner.style.display = "block";
+                return;
+            }
 
             const nbrParticipants = parseInt(document.getElementById("participants").value) || 0;
-            const totalEnfants = nbrParticipants * TARIF_PAR_TETE;
-            const totalJeuxFixe = FRAIS_FIXE_JEUX;
-            const totalGenieFixe = FRAIS_FIXE_GENIE;
-            const totalFinances = totalEnfants + totalJeuxFixe + totalGenieFixe;
+            const totalFinances = nbrParticipants * TARIF_PAR_ENFANT;
+            const dateHeureActuelle = new Date().toLocaleString('fr-FR');
 
             const donnees = {
-                refCamp: "CSA-" + Math.floor(100000 + Math.random() * 900000),
-                paroisse: document.getElementById("paroisse").value.toUpperCase(),
-                doyenne: document.getElementById("doyenne").value,
-                lieuCamp: document.getElementById("lieuCamp").value,
+                horodateur: dateHeureActuelle,
+                refRecu: "JFS-" + Math.floor(100000 + Math.random() * 900000),
+                paroisse: document.getElementById("paroisse").value.trim().toUpperCase(),
+                doyenne: document.getElementById("doyenne").value.trim(),
+                nomResponsable: document.getElementById("nom_resp").value.trim(),
+                telResponsable: document.getElementById("tel_resp").value.trim(),
                 participants: nbrParticipants,
-                nomResponsable: document.getElementById("nom_resp").value,
-                telResponsable: document.getElementById("tel_resp").value,
-                fraisEnfantsStr: totalEnfants.toLocaleString('fr-FR') + " F CFA",
-                fraisJeuxStr: totalJeuxFixe.toLocaleString('fr-FR') + " F CFA",
-                fraisGenieStr: totalGenieFixe.toLocaleString('fr-FR') + " F CFA",
-                montantTotal: totalFinances.toLocaleString('fr-FR') + " F CFA"
+                codeDiocese: codeSaisi,
+                montantTotalStr: totalFinances.toLocaleString('fr-FR') + " F CFA"
             };
 
-            const qrText = `Ref:${donnees.refCamp}|Paroisse:${donnees.paroisse}|Inscrits:${donnees.participants}|Total:${donnees.montantTotal}`;
-            const qrSrcCode = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(qrText)}&choe=UTF-8`;
-
-            genererFicheFraisPDF(donnees, qrSrcCode);
-            envoyerVersGoogleForm(donnees);
-
-            alert("Succès ! L'inscription a été enregistrée. Votre reçu officiel prenant en compte les frais de Génie en Herbe a été téléchargé.");
-            document.getElementById("campForm").reset();
-            calculerFrais();
-        });
-
-        function genererFicheFraisPDF(d, qrCodeUrl) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // 1. BANNIÈRE SUPÉRIEURE
-            doc.setFillColor(99, 13, 23);
-            doc.rect(0, 0, 220, 38, 'F');
-            doc.setFillColor(212, 175, 55);
-            doc.rect(0, 38, 220, 2.5, 'F');
-            
-            if (logoBase64) {
-                doc.addImage(logoBase64, 'JPEG', 14, 6, 25, 25);
-                doc.setTextColor(255, 255, 255);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(16);
-                doc.text("CAMP ANNUEL DES SERVANTS D'AUTEL 2026", 45, 24);
-            } else {
-                doc.setTextColor(255, 255, 255);
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(18);
-                doc.text("CAMP ANNUEL DES SERVANTS D'AUTEL 2026", 14, 24);
-            }
-
-            // 2. METADONNÉES
-            doc.setTextColor(60, 60, 60);
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Date d'émission : ${new Date().toLocaleDateString('fr-FR')}`, 150, 52);
-
-            doc.setTextColor(99, 13, 23);
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.text(`REÇU OFFICIEL DE PRÉ-INSCRIPTION : ${d.refCamp}`, 14, 64);
-            
-            doc.setDrawColor(200, 200, 200);
-            doc.setLineWidth(0.5);
-            doc.line(14, 68, 196, 68);
-
-            // 3. BLOC INFORMATION PAROISSE
-            doc.setTextColor(99, 13, 23);
-            doc.setFontSize(12);
-            doc.text("STRUCTURE ECCLÉSIALE ET SITE", 14, 80);
-            
-            doc.setTextColor(40, 40, 40);
-            doc.setFont("helvetica", "bold"); doc.text("Paroisse :", 16, 90);
-            doc.setFont("helvetica", "normal"); doc.text(d.paroisse, 55, 90);
-            
-            doc.setFont("helvetica", "bold"); doc.text("Doyenné :", 16, 98);
-            doc.setFont("helvetica", "normal"); doc.text(d.doyenne, 55, 98);
-            
-            doc.setFont("helvetica", "bold"); doc.text("Lieu du Camp :", 16, 106);
-            doc.setFont("helvetica", "normal"); doc.text(d.lieuCamp, 55, 106);
-
-            // 4. BLOC RESPONSABLE
-            doc.setTextColor(99, 13, 23);
-            doc.setFont("helvetica", "bold");
-            doc.text("RESPONSABLE DOSSIER", 14, 120);
-            
-            doc.setTextColor(40, 40, 40);
-            doc.setFont("helvetica", "bold"); doc.text("Nom du déclarant :", 16, 130);
-            doc.setFont("helvetica", "normal"); doc.text(d.nomResponsable, 55, 130);
-            
-            doc.setFont("helvetica", "bold"); doc.text("Contact Mobile :", 16, 138);
-            doc.setFont("helvetica", "normal"); doc.text(d.telResponsable, 55, 138);
-            
-            doc.setFont("helvetica", "bold"); doc.text("Effectif inscrit :", 16, 146);
-            doc.setFont("helvetica", "normal"); doc.text(`${d.participants} enfant(s) servant(s) d'autel`, 55, 146);
-
-            // 5. TABLEAU COMPTABLE
-            doc.setTextColor(99, 13, 23);
-            doc.setFont("helvetica", "bold");
-            doc.text("DÉTAIL DES ENCAISSEMENTS", 14, 162);
-
-            doc.setFillColor(240, 235, 230);
-            doc.rect(14, 168, 182, 8, 'F');
-            doc.setTextColor(40, 40, 40);
-            doc.setFontSize(10);
-            doc.text("Désignation des frais", 18, 173);
-            doc.text("Quantité / Type", 110, 173);
-            doc.text("Montant total", 155, 173);
-
-            doc.setFont("helvetica", "normal");
-            doc.text("Frais d'inscription individuels (4 000 F / enfant)", 18, 182);
-            doc.text(`${d.participants} enfant(s)`, 110, 182);
-            doc.text(d.fraisEnfantsStr, 155, 182);
-            doc.line(14, 186, 196, 186);
-
-            doc.text("Frais forfaitaires de jeu (par Paroisse)", 18, 192);
-            doc.text("Forfait unique", 110, 192);
-            doc.text(d.fraisJeuxStr, 155, 192);
-            doc.line(14, 196, 196, 196);
-
-            doc.text("Frais d'obtention du Document « Génie en Herbe »", 18, 202);
-            doc.text("Forfait unique", 110, 202);
-            doc.text(d.fraisGenieStr, 155, 202);
-            
-            doc.setLineWidth(0.8);
-            doc.setDrawColor(99, 13, 23);
-            doc.line(14, 206, 196, 206);
-            
-            doc.setFont("helvetica", "bold");
-            doc.setTextColor(99, 13, 23);
-            doc.setFontSize(11);
-            doc.text("MONTANT NET À PAYER", 18, 212);
-            doc.text(d.montantTotal, 155, 212);
-
-            doc.setLineWidth(0.4);
-            doc.setDrawColor(180, 180, 180);
-            doc.rect(14, 168, 182, 49, 'D');
-
-            // 6. QR CODE ET ZONE DE SIGNATURES
-            if (qrCodeUrl) {
-                doc.addImage(qrCodeUrl, 'JPEG', 14, 224, 34, 34);
-            }
-
-            doc.setDrawColor(210, 210, 210);
-            doc.rect(56, 224, 66, 34, 'D');
-            doc.setTextColor(60, 60, 60);
-            doc.setFontSize(9);
-            doc.text("Signature du Responsable", 59, 230);
-            doc.text("qui a fait l'inscription :", 59, 234);
-
-            doc.rect(130, 224, 66, 34, 'D');
-            doc.text("Signature & Cachet du", 133, 230);
-            doc.text("Responsable Diocésain :", 133, 234);
-
-            doc.setTextColor(140, 140, 140);
-            doc.setFontSize(8);
-            doc.setFont("helvetica", "italic");
-            doc.text("Ce document officiel doit être imprimé et présenté au secrétariat du diocèse pour validation définitive financière.", 14, 272);
-            doc.text("Camp des Servants d'Autel 2026 - Généré via l'application de gestion automatisée.", 14, 276);
-
-            doc.save(`Recu_Officiel_Camp2026_${d.paroisse.replace(/ /g, "_")}.pdf`);
-        }
-
-        function envoyerVersGoogleForm(d) {
-            const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdO9TY_fF1fq7ISlJFLIMwSmikmN2-JxaPXFa8A4SMS_26Lhw/formResponse";
-            
+            // Envoi direct vers Google Forms avec les VRAIS identifiants entry.XXXXXX
             const formData = new FormData();
-            formData.append("entry.1100230385", d.refCamp);
-            formData.append("entry.1508747386", d.paroisse);
-            formData.append("entry.991001714", d.doyenne);
-            formData.append("entry.1239133451", d.participants);
-            formData.append("entry.944029782", d.nomResponsable);
-            formData.append("entry.723121214", d.telResponsable);
-            formData.append("entry.367846832", d.montantTotal);
-            formData.append("entry.197350379", d.lieuCamp);
+            formData.append("entry.1706240212", donnees.horodateur);
+            formData.append("entry.1491761616", donnees.refRecu);
+            formData.append("entry.1499596378", donnees.paroisse);
+            formData.append("entry.1165681121", donnees.doyenne);
+            formData.append("entry.1091515257", donnees.nomResponsable);
+            formData.append("entry.1444061413", donnees.telResponsable);
+            formData.append("entry.150616182",  donnees.participants);
+            formData.append("entry.685387405",  donnees.codeDiocese);
+            formData.append("entry.122606560",  donnees.montantTotalStr);
 
-            fetch(googleFormUrl, {
+            fetch(GOOGLE_FORM_URL, {
                 method: "POST",
                 mode: "no-cors",
                 body: formData
-            }).catch(error => console.log("Sauvegarde synchronisée."));
+            }).catch(err => console.log(err));
+
+            // Génération du Reçu PDF
+            genererRecuPDF(donnees);
+
+            alertBanner.className = "alert-banner success";
+            alertBanner.textContent = "✅ Inscription enregistrée avec succès ! Votre reçu PDF a été téléchargé.";
+            alertBanner.style.display = "block";
+            document.getElementById("formationForm").reset();
+            calculerFrais();
+        });
+
+        function genererRecuPDF(d) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFillColor(30, 41, 59); doc.rect(0, 0, 210, 36, 'F');
+            doc.setFillColor(217, 119, 6); doc.rect(0, 36, 210, 2.5, 'F');
+            doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(15);
+            doc.text("JOURNÉE DE FORMATION SECTORIELLE", 105, 16, { align: "center" });
+            doc.setFontSize(12); doc.setTextColor(217, 119, 6);
+            doc.text("SERVANTS D'AUTEL - REÇU OFFICIEL", 105, 26, { align: "center" });
+
+            doc.setTextColor(30, 41, 59); doc.setFontSize(12);
+            doc.text(`N° RÉFÉRENCE : ${d.refRecu}`, 14, 50);
+            doc.text(`Paroisse : ${d.paroisse}`, 14, 62);
+            doc.text(`Doyenné : ${d.doyenne}`, 14, 70);
+            doc.text(`Responsable : ${d.nomResponsable} (${d.telResponsable})`, 14, 78);
+            doc.text(`Nombre d'enfants : ${d.participants}`, 14, 86);
+            doc.text(`Code Diocésain : ${d.codeDiocese}`, 14, 94);
+            doc.text(`Montant Total : ${d.montantTotalStr}`, 14, 102);
+
+            doc.save(`Recu_${d.paroisse.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`);
         }
     </script>
 </body>
