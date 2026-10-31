@@ -93,7 +93,6 @@
         <h1>Journée de Formation Sectorielle des <span>Servants d'Autel</span></h1>
         <p>Enregistrez les effectifs de votre paroisse pour la grande journée de formation liturgique.</p>
         
-        <!-- Instructions MoMo -->
         <div style="background: rgba(15, 23, 42, 0.85); border: 2px solid var(--secondary-color); padding: 22px; border-radius: 12px; max-width: 800px; margin: 10px auto 25px auto; text-align: left; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">
             <h3 style="color: var(--secondary-color); margin-bottom: 10px; font-size: 16px; text-transform: uppercase;">
                 📌 Procédure d'inscription :
@@ -143,7 +142,7 @@
 
                 <div class="form-group">
                     <label for="codeDiocese">Code d'Autorisation Diocésain <span class="req">*</span></label>
-                    <input type="text" id="codeDiocese" class="input-auth" required placeholder="Ex: PNS-HIF3">
+                    <input type="text" id="codeDiocese" class="input-auth" required placeholder="Ex: JFS-NOVA">
                     <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Délivré par le responsable diocésain après validation de votre dépôt MoMo.</div>
                 </div>
 
@@ -200,10 +199,11 @@
 
             const nbrParticipants = parseInt(document.getElementById("participants").value) || 0;
             const totalFinances = nbrParticipants * TARIF_PAR_ENFANT;
-            const dateHeureActuelle = new Date().toLocaleString('fr-FR');
+            const dateHeureActuelle = new Date().toLocaleDateString('fr-FR');
 
             const donnees = {
-                horodateur: dateHeureActuelle,
+                horodateur: new Date().toLocaleString('fr-FR'),
+                dateEmission: dateHeureActuelle,
                 refRecu: "JFS-" + Math.floor(100000 + Math.random() * 900000),
                 paroisse: document.getElementById("paroisse").value.trim().toUpperCase(),
                 doyenne: document.getElementById("doyenne").value.trim(),
@@ -240,26 +240,157 @@
             calculerFrais();
         });
 
+        // -------------------------------------------------------------
+        // NOUVEAU DESIGN PROFESSIONNEL DU REÇU PDF
+        // -------------------------------------------------------------
         function genererRecuPDF(d) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            doc.setFillColor(30, 41, 59); doc.rect(0, 0, 210, 36, 'F');
-            doc.setFillColor(217, 119, 6); doc.rect(0, 36, 210, 2.5, 'F');
-            doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(15);
-            doc.text("JOURNÉE DE FORMATION SECTORIELLE", 105, 16, { align: "center" });
-            doc.setFontSize(12); doc.setTextColor(217, 119, 6);
-            doc.text("SERVANTS D'AUTEL - REÇU OFFICIEL", 105, 26, { align: "center" });
 
-            doc.setTextColor(30, 41, 59); doc.setFontSize(12);
-            doc.text(`N° RÉFÉRENCE : ${d.refRecu}`, 14, 50);
-            doc.text(`Paroisse : ${d.paroisse}`, 14, 62);
-            doc.text(`Doyenné : ${d.doyenne}`, 14, 70);
-            doc.text(`Responsable : ${d.nomResponsable} (${d.telResponsable})`, 14, 78);
-            doc.text(`Nombre d'enfants : ${d.participants}`, 14, 86);
-            doc.text(`Code Diocésain : ${d.codeDiocese}`, 14, 94);
-            doc.text(`Montant Total : ${d.montantTotalStr}`, 14, 102);
+            // 1. Bandeau supérieur (Couleur Bleu Nuit)
+            doc.setFillColor(30, 41, 59);
+            doc.rect(0, 0, 210, 32, 'F');
+            
+            // Liseré doré sous le bandeau
+            doc.setFillColor(217, 119, 6);
+            doc.rect(0, 32, 210, 2, 'F');
 
-            doc.save(`Recu_${d.paroisse.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`);
+            // Texte de l'en-tête
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("JOURNÉE DE FORMATION SECTORIELLE DES SERVANTS D'AUTEL 2026", 105, 15, { align: "center" });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(217, 119, 6);
+            doc.text("COMMISSION DIOCÉSAINE DE LITURGIE", 105, 23, { align: "center" });
+
+            // Date d'émission en haut à droite
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Date d'émission : ${d.dateEmission}`, 196, 42, { align: "right" });
+
+            // 2. Titre du Reçu
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.setTextColor(120, 20, 20); // Rouge bordeaux / accent
+            doc.text(`REÇU OFFICIEL DE PRÉ-INSCRIPTION : ${d.refRecu}`, 14, 48);
+
+            // Ligne de séparation fine
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.5);
+            doc.line(14, 52, 196, 52);
+
+            // 3. Section : STRUCTURE ECCLÉSIALE
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(30, 41, 59);
+            doc.text("STRUCTURE ECCLÉSIALE ET SITE", 14, 61);
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Paroisse :`, 14, 69);
+            doc.setFont("helvetica", "bold");
+            doc.text(`${d.paroisse}`, 45, 69);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(`Doyenné :`, 14, 76);
+            doc.setFont("helvetica", "bold");
+            doc.text(`${d.doyenne}`, 45, 76);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(`Code d'Autorisation :`, 14, 83);
+            doc.setFont("helvetica", "bold");
+            doc.text(`${d.codeDiocese}`, 45, 83);
+
+            // 4. Section : RESPONSABLE DOSSIER
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(30, 41, 59);
+            doc.text("RESPONSABLE DOSSIER", 14, 96);
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Nom du déclarant :`, 14, 104);
+            doc.setFont("helvetica", "bold");
+            doc.text(`${d.nomResponsable}`, 48, 104);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(`Contact Mobile :`, 14, 111);
+            doc.setFont("helvetica", "bold");
+            doc.text(`${d.telResponsable}`, 48, 111);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(`Effectif inscrit :`, 14, 118);
+            doc.setFont("helvetica", "bold");
+            doc.text(`${d.participants} enfant(s) servant(s) d'autel`, 48, 118);
+
+            // 5. Section : DÉTAIL DES ENCAISSEMENTS (Tableau)
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(30, 41, 59);
+            doc.text("DÉTAIL DES ENCAISSEMENTS", 14, 132);
+
+            // En-tête du tableau
+            doc.setFillColor(241, 245, 249);
+            doc.rect(14, 137, 182, 8, 'F');
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(9);
+            doc.setTextColor(50, 50, 50);
+            doc.text("Désignation des frais", 18, 142);
+            doc.text("Quantité / Type", 110, 142);
+            doc.text("Montant total", 160, 142);
+
+            // Ligne du tableau
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.text(`Frais d'inscription individuels (300 F / enfant)`, 18, 151);
+            doc.text(`${d.participants} enfant(s)`, 110, 151);
+            
+            const totalCalc = d.participants * 300;
+            doc.text(`${totalCalc.toLocaleString('fr-FR')} F CFA`, 160, 151);
+
+            // Cadre du tableau
+            doc.setDrawColor(203, 213, 225);
+            doc.rect(14, 137, 182, 22);
+            doc.line(14, 146, 196, 146); // Ligne horizontale sous l'en-tête
+
+            // Ligne : MONTANT NET À PAYER
+            doc.setFillColor(254, 243, 199); // Fond ambre léger
+            doc.rect(14, 159, 182, 10, 'F');
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.setTextColor(180, 83, 9);
+            doc.text("MONTANT NET À PAYER", 18, 165);
+            doc.text(`${totalCalc.toLocaleString('fr-FR')} F CFA`, 160, 165);
+            doc.rect(14, 159, 182, 10); // Contour du total
+
+            // 6. Cadres de Signatures
+            doc.setDrawColor(150, 150, 150);
+            doc.rect(14, 178, 85, 30); // Cadre Responsable
+            doc.rect(111, 178, 85, 30); // Cadre Diocésain
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(8);
+            doc.setTextColor(50, 50, 50);
+            doc.text("Signature du Responsable", 18, 183);
+            doc.setFont("helvetica", "normal");
+            doc.text("qui a fait l'inscription :", 18, 187);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Signature & Cachet du", 115, 183);
+            doc.text("Responsable Diocésain :", 115, 187);
+
+            // 7. Pied de page légal
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(8);
+            doc.setTextColor(130, 130, 130);
+            doc.text("Ce document officiel doit être imprimé et présenté au secrétariat du diocèse pour validation définitive financière.", 14, 218);
+            doc.text("Journée de Formation Sectorielle 2026 - Généré via l'application de gestion automatisée.", 14, 223);
+
+            // Téléchargement du fichier PDF
+            doc.save(`Recu_JFS_${d.paroisse.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`);
         }
     </script>
 </body>
