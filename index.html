@@ -204,14 +204,14 @@
             // Envoi direct vers Google Forms avec vos identifiants entry exacts
             const formData = new FormData();
             formData.append("entry.1706240212", donnees.horodateur);
-            formData.append("entry.1491761616", donnees.refRecu);
-            formData.append("entry.1499596378", donnees.paroisse);
-            formData.append("entry.1165681121", donnees.doyenne);
-            formData.append("entry.1091515257", donnees.nomResponsable);
-            formData.append("entry.1444061413", donnees.telResponsable);
-            formData.append("entry.150616182",  donnees.participants);
-            formData.append("entry.685387405",  donnees.codeDiocese);
-            formData.append("entry.122606560",  donnees.montantTotalStr);
+            formData.append("entry.57265220", donnees.refRecu);
+            formData.append("entry.1655716726", donnees.paroisse);
+            formData.append("entry.1825863894", donnees.doyenne);
+            formData.append("entry.1109862854", donnees.nomResponsable);
+            formData.append("entry.1922628165", donnees.telResponsable);
+            formData.append("entry.498672641",  donnees.participants);
+            formData.append("entry.34072538",  donnees.codeDiocese);
+            formData.append("entry.533432239",  donnees.montantTotalStr);
 
             fetch(GOOGLE_FORM_URL, {
                 method: "POST",
